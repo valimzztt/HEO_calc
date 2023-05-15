@@ -120,17 +120,69 @@ print("These are the atoms")
 print(atoms)
 from clease.montecarlo import Montecarlo
 from clease.montecarlo.observers import EnergyEvolution
-
+from clease.montecarlo import Montecarlo
 T = 2000
+nsteps=1372000
 mc = Montecarlo(atoms, T)
-obs = EnergyEvolution(mc)
-# define your own observer, example: monitor = LayerMonitor(atoms)
-#mc.attach(obs, interval=1372000)
-#mc.run(steps=1372000)
-mc.attach(obs, interval=137)
-mc.run(steps=137)
 
+from clease.montecarlo.constraints import FixedElement
+cnst = FixedElement('O')
+mc.generator.add_constraint(cnst)
+
+from clease.montecarlo.observers import EnergyEvolution, Snapshot, CorrelationFunctionObserver, AcceptanceRate
+obs = EnergyEvolution(mc)
+mc.attach(obs, interval=1000)
+corr = CorrelationFunctionObserver(atoms.calc)
+mc.attach(corr)
+accrate = AcceptanceRate()
+mc.attach(accrate)
+snap = Snapshot(atoms, fname='snapshot')
+mc.attach(snap, interval=137200)
+
+
+mc.run(steps=nsteps)
 energies = obs.energies
-# After a MC run, you can retrieve internal energy, heat capacity etc. by calling
 thermo = mc.get_thermodynamic_quantities()
-print(thermo)
+
+f = open('MC_2000','w')
+print(thermo, file=f)
+print(energies, sep='\n', file=f)
+f.close()
+
+for i in range(2000, 0, -50):
+    T = i
+    #atoms = vasp.read_vasp(POSCARstring)
+    #atoms = attach_calculator(settings, atoms=atoms, eci=eci)
+    mc = Montecarlo(atoms, T)
+    mc.generator.add_constraint(cnst)
+    obs = EnergyEvolution(mc)
+    mc.attach(obs, interval=1000)
+    snap = Snapshot(atoms, fname='snapshot')
+    mc.attach(snap, interval=137200)
+    corr = CorrelationFunctionObserver(atoms.calc)
+    mc.attach(corr)
+    accrate = AcceptanceRate()
+    mc.attach(accrate)
+    
+    mc.run(steps=137200)
+    mc.run(steps=nsteps)
+
+    energies = obs.energies
+    rate=accrate.get_averages()
+    thermo = mc.get_thermodynamic_quantities()
+    corr_dict=corr.get_averages()
+    
+    from ase.build import sort
+    from ase.io import vasp, db
+    import pickle
+
+    sorted_atoms=sort(atoms)
+    vasp.write_vasp('POSCAR{}.vasp'.format(i), sorted_atoms, direct=False, wrap=False)
+    POSCARstring='POSCAR{}.vasp'.format(i)
+    
+    f = open('MC_{}'.format(i),'w')
+    print(thermo, file=f)
+    print(energies, sep='\n', file=f)
+    f.close()
+
+
