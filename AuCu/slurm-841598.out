@@ -1,0 +1,11 @@
+/home/valmzztt/HEO_calc/AuCu/AuCu-emt-mc.py:58: DeprecationWarning: Call to deprecated method plot_CV. (Use the alpha_CV method instead.) -- Deprecated since version 0.11.7.
+  alpha = eva.plot_CV(alpha_min=1E-7, alpha_max=1.0, num_alpha=50)
+/home/valmzztt/miniconda3/lib/python3.10/site-packages/clease/evaluate.py:837: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+/home/valmzztt/HEO_calc/AuCu/AuCu-emt-mc.py:66: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+/home/valmzztt/HEO_calc/AuCu/AuCu-emt-mc.py:69: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+Optimal value of alpha is equal to
+1e-05
+atoms
