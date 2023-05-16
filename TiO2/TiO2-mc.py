@@ -20,6 +20,8 @@ settings = CECrystal(concentration=conc,
     max_cluster_dia=[4])
 pseudo_dir = './pseudos/'
 
+
+
 pseudopotentials = {'Ti': pseudo_dir + 'Ti.pbesol-spn-kjpaw_psl.1.0.0.UPF',
                     'Zr': pseudo_dir + 'Zr.pbesol-spn-kjpaw_psl.1.0.0.UPF',
                     'O': pseudo_dir + 'O.pbesol-n-kjpaw_psl.1.0.0.UPF'}
@@ -31,11 +33,11 @@ input_data = {
            'prefix': 'tutorial',     
             },
         'system': {
-           'ecutwfc':  550,
+           'ecutwfc':  40.424222147,
            'occcupations': 'smearing',
            'degauss': 0.0146997171,
             }
-        }
+}
 
 
 calc = Espresso(pseudopotentials = pseudopotentials,
@@ -83,13 +85,13 @@ eva = Evaluate(settings=settings, scoring_scheme='loocv')
 # the lowest CV score
 eva.set_fitting_scheme(fitting_scheme='l2')
 #eva.set_fitting_scheme(fitting_scheme='l2', alpha=0.0001)
-alpha, cv = eva.alpha_CV(alpha_min=1E-6, alpha_max=10.0, num_alpha=50)
-print("Minimum alpha is equal to")
-# The CV score for all alphas is equal to zero, so just set alpha to the first element of array (why???)
-
-alpha = alpha[-1]
-# set the alpha value with the one found above, and fit data using it.
+#alpha, cv = eva.alpha_CV(alpha_min=1E-6, alpha_max=10.0, num_alpha=50)
+alpha = eva.plot_CV(alpha_min=1E-6, alpha_max=10.0, num_alpha=50)
 eva.set_fitting_scheme(fitting_scheme='l2', alpha=alpha)
+#print(eva.__dir__())
+#print(eva.scheme)
+#print(eva.cf_matr`ix)
+#print(eva.e_dft)
 eva.fit()
 
 # plot ECI values
