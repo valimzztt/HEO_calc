@@ -2,6 +2,7 @@ from ase.calculators.espresso import Espresso
 from ase.db import connect
 from clease.tools import update_db
 from clease.settings import Concentration
+import os
 import matplotlib.pyplot as plt
 import json
 conc = Concentration(basis_elements=[['Ti', 'Zr'], ['O']])
@@ -18,18 +19,22 @@ settings = CECrystal(concentration=conc,
     basis_func_type='binary_linear',
     #max_cluster_size=2,
     max_cluster_dia=[4])
+
 pseudo_dir = './pseudos/'
+curr_directory = os.getcwd()
+pseudo_dir = curr_directory + '/pseudos'
+out_dir = curr_directory + '/out'
 
 
-
-pseudopotentials = {'Ti': pseudo_dir + 'Ti.pbesol-spn-kjpaw_psl.1.0.0.UPF',
-                    'Zr': pseudo_dir + 'Zr.pbesol-spn-kjpaw_psl.1.0.0.UPF',
-                    'O': pseudo_dir + 'O.pbesol-n-kjpaw_psl.1.0.0.UPF'}
+pseudopotentials = {'Ti': 'Ti.pbesol-spn-kjpaw_psl.1.0.0.UPF',
+                    'Zr': 'Zr.pbesol-spn-kjpaw_psl.1.0.0.UPF',
+                    'O': 'O.pbesol-n-kjpaw_psl.1.0.0.UPF'}
 
 input_data = {
         'control': {
            'calculation': 'relax',
            'restart_mode': 'from_scratch',
+           'pseudo_dir': pseudo_dir,
            'prefix': 'tutorial',     
             },
         'system': {
@@ -88,10 +93,8 @@ eva.set_fitting_scheme(fitting_scheme='l2')
 #alpha, cv = eva.alpha_CV(alpha_min=1E-6, alpha_max=10.0, num_alpha=50)
 alpha = eva.plot_CV(alpha_min=1E-6, alpha_max=10.0, num_alpha=50)
 eva.set_fitting_scheme(fitting_scheme='l2', alpha=alpha)
-#print(eva.__dir__())
-#print(eva.scheme)
-#print(eva.cf_matr`ix)
-#print(eva.e_dft)
+print("The chosen value of alpha is")
+print(alpha)
 eva.fit()
 
 # plot ECI values
@@ -123,6 +126,7 @@ print(atoms)
 from clease.montecarlo import Montecarlo
 from clease.montecarlo.observers import EnergyEvolution
 from clease.montecarlo import Montecarlo
+from clease.montecarlo import Montecarlo
 T = 2000
 nsteps=1372000
 mc = Montecarlo(atoms, T)
@@ -142,6 +146,7 @@ snap = Snapshot(atoms, fname='snapshot')
 mc.attach(snap, interval=137200)
 
 
+mc.run(steps=nsteps)
 mc.run(steps=nsteps)
 energies = obs.energies
 thermo = mc.get_thermodynamic_quantities()

@@ -7,4 +7,4 @@ module purge
 module add impi sci/dft sci/qe_7.2
 export MKL_NUM_THREADS=1
 export ASE_ESPRESSO_COMMAND="/home/sci/opt/qe-7.2_impi/bin/pw.x -in PREFIX.pwi > PREFIX.pwo"
-python TiO2-bs.py
+python TiO2-hubbard.py

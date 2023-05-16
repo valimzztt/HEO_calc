@@ -1,18 +1,22 @@
 from ase.calculators.espresso import Espresso
 from ase.db import connect
 from clease.tools import update_db
+import os
 
-pseudo_dir = './pseudos/'
+curr_directory = os.getcwd()
+pseudo_dir = curr_directory + '/pseudos'
+out_dir = curr_directory + '/out'
 
-pseudopotentials = {'Ti': pseudo_dir + 'Ti.pbesol-spn-kjpaw_psl.1.0.0.UPF',
-                    'Zr': pseudo_dir + 'Zr.pbesol-spn-kjpaw_psl.1.0.0.UPF',
-                    'O': pseudo_dir + 'O.pbesol-n-kjpaw_psl.1.0.0.UPF'}
+pseudopotentials = {'Ti': 'Ti.pbesol-spn-kjpaw_psl.1.0.0.UPF',
+                    'Zr': 'Zr.pbesol-spn-kjpaw_psl.1.0.0.UPF',
+                    'O': 'O.pbesol-n-kjpaw_psl.1.0.0.UPF'}
 
 input_data = {
         'control': {
            'calculation': 'relax',
            'restart_mode': 'from_scratch',
-            'outdir': './out',
+           'outdir': out_dir,
+           'pseudo_dir': pseudo_dir,
            'prefix': 'tutorial',        
             },
         'system': {
@@ -21,7 +25,6 @@ input_data = {
            'degauss': 0.0146997171,
             }
         }
-
 
 calc = Espresso(pseudopotentials = pseudopotentials,
                 input_data = input_data,
